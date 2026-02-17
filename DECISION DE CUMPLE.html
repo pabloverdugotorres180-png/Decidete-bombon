@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cita Romántica Interactiva</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Overlay romántico para mejorar visibilidad */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,50,0.3);
+      z-index: 0;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      text-shadow: 2px 2px 10px #000;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #introText {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 4px #000;
+      position: relative;
+      z-index: 1;
+    }
+
+    .option, #mensaje, #preguntas {
+      background: rgba(0,0,0,0.5);
+      border-radius: 20px;
+      margin: 15px auto;
+      padding: 20px;
+      width: 85%;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      transition: all 0.5s;
+      position: relative;
+      z-index: 1;
+    }
+
+    button {
+      margin: 10px;
+      padding: 12px 20px;
+      font-size: 1.2em;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.3);
+      color: #000;
+    }
+
+    button:hover {
+      background: rgba(255,255,255,0.6);
+      transform: scale(1.1);
+    }
+
+    #mensaje {
+      font-size: 1.4em;
+      min-height: 60px;
+      text-shadow: 2px 2px 5px #000;
+      position: relative;
+      z-index: 1;
+    }
+
+    .corazon {
+      position: absolute;
+      font-size: 20px;
+      color: #ff4d6d;
+      animation: flotar 2s ease-out forwards;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @keyframes flotar {
+      0% {opacity:1; transform: translateY(0) scale(1);}
+      100% {opacity:0; transform: translateY(-150px) scale(1.5);}
+    }
+
+    #backBtn {
+      margin-top: 10px;
+      background: rgba(255,200,200,0.5);
+      color: #800000;
+      display:none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌅 Una cita mágica</h1>
+  <div id="introText">
+    Bueno Carmencita de mi Corazón, falta poquito pa tu cumpleaños y sé que tienes ganas de saber cual es el plan, pero antes de eso tendrás que ganarte la información y obviamente te haré preguntitas jiji, ¡te quiero mucho y disfruta de este jueguecito! 💖
+  </div>
+
+  <div id="inicio" class="option">
+    <h2>QUE QUIERES HASE TU MI LOCA?</h2>
+    <button onclick="veDirecto()">Ve directo al grano si eres una aburria y das pena</button>
+    <button onclick="juegoPreguntas()">A jugal mi bebesota</button>
+  </div>
+
+  <div id="preguntas" class="option" style="display:none;"></div>
+  <div id="cenas" class="option" style="display:none;"></div>
+  <div id="mensaje"></div>
+  <button id="backBtn" onclick="volver()">⬅ Volver</button>
+
+  <script>
+    let historial = [];
+    let preguntaActual = 0;
+
+    const preguntas = [
+      {
+        pregunta: "¿Cuando fue el día en el que nos vimos por primera vez?",
+        opciones: ["25 de febrero", "24 de febrero", "26 de febrero"],
+        correcta: 0,
+        respuestaTexto: [
+          "¡OLEEEÉ a la primera bichota mala! 😍",
+          "Illa espabila que habal de 24, tonta ere 😜",
+          "DESPUÉS SOY YO EL QUE NO SE ACUERDA DE LAS COSAS 😂"
+        ]
+      },
+      {
+        pregunta: "Cuál es la comida favorita de Pablo?",
+        opciones: ["Hamburguesa de restaurante rica y buena jeje", "La carne", "Mi comida fav es miniña Carmen jeje"],
+        correcta: 1,
+        respuestaTexto: [
+          "Me encanta pero va a ser que no bombonaco, esfuerzate más andaa 😅",
+          "OBVIAMENTE ESTA porque a miniña Carmen todavía no me la puedo comer jiji 😜",
+          "Más quisiera tu, vamos, HASTA EL MATRIMONIO ATEA!!! 😂"
+        ]
+      },
+      {
+        pregunta: "Quién tiene mejores ideas de regalos?",
+        opciones: ["Mi señor supremo y adorado Pablo el grandioso", "Cacarmen"],
+        correcta: 0,
+        respuestaTexto: [
+          "Obviamente, quien crees que soy! 🎁",
+          "No nena, ni lo sueñes, por algo tu nombre empieza por caca 😆"
+        ]
+      },
+      {
+        pregunta: "Qué fue lo que más impresionó y enamoró a Pablo cuando conoció a su querida Carmen?",
+        opciones: ["Su culo", "Su forma de ser gitana sin serlo", "Las coincidencias que teníamos en común", "Sus granetes jajaja perdon no me mates te amo"],
+        correcta: [0,1,2],
+        multiple: true,
+        respuestaTexto: ["¡TODAS SON CORRECTAS JIJIJI! 😍","¡TODAS SON CORRECTAS JIJIJI! ❤️","¡TODAS SON CORRECTAS JIJIJI! 😘","TODAS SON CORRECTAS JIJIJI 😉"]
+      },
+      {
+        pregunta: "Qué fue lo primero que te regaló tu querido y hermoso Pablo?",
+        opciones: ["Un helado para cada uno que no nos pudimos comer ninguno jajja", "Un paquete de tabaco de ceuta", "Un mensaje felicitándote el día de tu cumple cantándote con mis primos"],
+        correcta: 1,
+        respuestaTexto: [
+          "Jajaja no, esfuerzate un poco anda que se nota que se te antoja un helao en 😆",
+          "JAJAJA vaya fumadores tontos 😂",
+          "Casi, pero no 😜"
+        ]
+      },
+      {
+        pregunta: "Qué fue lo que más preocupó a Pablo al principio de la relación?",
+        opciones: ["No estar a la altura", "La vez que me llamaste llorando y no te lo cogí estando solo 1 mes hablando", "Las inseguridades"],
+        correcta: 1,
+        respuestaTexto: [
+          "Literal, a la altura no estaba jajajaja 😅",
+          "ufff me dio to la cosa de verdad sorry te falle ese dia jijiji 😂",
+          "tss a ver podria ser pero no era la principal de echo eso fue mas palante de la relacion ejeje 😆"
+        ]
+      }
+    ];
+
+    function crearCorazones(){
+      for(let i=0;i<5;i++){
+        const c=document.createElement('div');
+        c.className='corazon';
+        c.style.left=Math.random()*90+'vw';
+        c.style.fontSize=Math.random()*30+20+'px';
+        c.textContent='❤️';
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),2000);
+      }
+    }
+
+    function veDirecto(){
+      historial.push(document.getElementById('inicio').innerHTML);
+      mostrarCenas();
+    }
+
+    function juegoPreguntas(){
+      historial.push(document.getElementById('inicio').innerHTML);
+      document.getElementById('inicio').style.display='none';
+      document.getElementById('preguntas').style.display='block';
+      preguntaActual=0;
+      mostrarPregunta(preguntaActual);
+    }
+
+    function mostrarPregunta(i){
+      if(i>=preguntas.length){
+        mostrarCenas();
+        return;
+      }
+      let p=preguntas[i];
+      let html=`<h2>${p.pregunta}</h2>`;
+      p.opciones.forEach((op,idx)=>{
+        html+=`<button onclick="respuestaPregunta(${i},${idx})">${op}</button>`;
+      });
+      html+=`<br><button onclick="retrocederPregunta()">⬅ Volver</button>`;
+      document.getElementById('preguntas').innerHTML=html;
+    }
+
+    function respuestaPregunta(i,idx){
+      let p=preguntas[i];
+      let correcta=p.correcta;
+      let multiple=p.multiple||false;
+      let acierto=false;
+
+      if(multiple){
+        if(correcta.includes(idx)) acierto=true;
+      } else {
+        if(idx===correcta) acierto=true;
+      }
+
+      mostrarMensaje(p.respuestaTexto[idx]);
+      crearCorazones();
+
+      if(acierto){
+        preguntaActual++;
+        setTimeout(()=>mostrarPregunta(preguntaActual),1000);
+      } else {
+        setTimeout(()=>mostrarPregunta(preguntaActual),1500);
+      }
+    }
+
+    function retrocederPregunta(){
+      if(preguntaActual>0){
+        preguntaActual--;
+        mostrarPregunta(preguntaActual);
+      } else {
+        document.getElementById('preguntas').style.display='none';
+        document.getElementById('inicio').style.display='block';
+        document.getElementById('mensaje').textContent='';
+      }
+    }
+
+    function mostrarCenas(){
+      document.getElementById('inicio').style.display='none';
+      document.getElementById('preguntas').style.display='none';
+      document.getElementById('cenas').style.display='block';
+      let html=`<h2>Elige tu plan, miarma 😘</h2>
+      <button onclick="mostrarMensaje('Cena de 65€ en el Fogón de Mariana o restaurantes THEFork, ¡ole miarma!');crearCorazones()">Cena 65€</button>
+      <button onclick="mostrarMensaje('Cena de 45€ y 20€ pa\' cine, gratis miarma!');crearCorazones()">Cena 45€ + Cine</button>`;
+      document.getElementById('cenas').innerHTML=html;
+      document.getElementById('backBtn').style.display='inline-block';
+    }
+
+    function mostrarMensaje(texto){
+      document.getElementById('mensaje').textContent=texto;
+    }
+
+    function volver(){
+      document.getElementById('inicio').style.display='block';
+      document.getElementById('inicio').innerHTML=historial.pop();
+      document.getElementById('preguntas').style.display='none';
+      document.getElementById('cenas').style.display='none';
+      document.getElementById('mensaje').textContent='';
+    }
+
+  </script>
+</body>
+</html>
